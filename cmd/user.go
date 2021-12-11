@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pete911/auth0/cmd/flags"
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
@@ -10,6 +11,8 @@ import (
 )
 
 var (
+	listUserFlags = flags.ListUserFlags{}
+
 	listUserCmd = &cobra.Command{
 		Use:     "user",
 		Short:   "user",
@@ -18,6 +21,11 @@ var (
 	}
 )
 
+func init() {
+	listUserCmd.Flags().StringVar(&listUserFlags.Email, "email", "", "user email")
+	listUserCmd.Flags().StringVar(&listUserFlags.Name, "name", "", "user name")
+}
+
 func listUserRun(_ *cobra.Command, _ []string) {
 	m, err := management.New(UserConfig.Domain, management.WithClientCredentials(UserConfig.ClientId, UserConfig.ClientSecret))
 	if err != nil {
@@ -25,7 +33,7 @@ func listUserRun(_ *cobra.Command, _ []string) {
 		os.Exit(1)
 	}
 
-	list, err := m.User.List()
+	list, err := m.User.List(listUserFlags.GetRequestOptions()...)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -35,10 +43,10 @@ func listUserRun(_ *cobra.Command, _ []string) {
 
 func printUserList(users []*management.User) {
 	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 0)
-	fmt.Fprintln(w, "Email \t Logins Count \t Created At \t Last Login \t Connections")
+	fmt.Fprintln(w, "Email \t Name \t Logins Count \t Created At \t Last Login \t Connections")
 	for _, u := range users {
-		fmt.Fprintf(w, "%s \t %s \t %s \t %s \t %v\n",
-			StringValue(u.Email), Int64Value(u.LoginsCount), TimeValue(u.CreatedAt), TimeValue(u.LastLogin), getIdentityConnections(u))
+		fmt.Fprintf(w, "%s \t %s \t %s \t %s \t %s \t %v\n",
+			StringValue(u.Email), StringValue(u.Name), Int64Value(u.LoginsCount), TimeValue(u.CreatedAt), TimeValue(u.LastLogin), getIdentityConnections(u))
 	}
 	w.Flush()
 }
