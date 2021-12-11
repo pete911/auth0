@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/auth0.v5/management"
@@ -29,10 +30,17 @@ func listUserRun(_ *cobra.Command, _ []string) {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
+	printUserList(list.Users)
+}
 
-	for _, user := range list.Users {
-		fmt.Printf("%s\t%s\t%s\t %v\n", StringValue(user.Email), user.CreatedAt, user.LastLogin, getIdentityConnections(user))
+func printUserList(users []*management.User) {
+	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 0)
+	fmt.Fprintln(w, "Email \t Logins Count \t Created At \t Last Login \t Connections")
+	for _, u := range users {
+		fmt.Fprintf(w, "%s \t %s \t %s \t %s \t %v\n",
+			StringValue(u.Email), Int64Value(u.LoginsCount), TimeValue(u.CreatedAt), TimeValue(u.LastLogin), getIdentityConnections(u))
 	}
+	w.Flush()
 }
 
 func getIdentityConnections(u *management.User) []string {
