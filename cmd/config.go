@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 )
 
-var UserConfig Config
-
 type Profile map[string]Config
 
 type Config struct {

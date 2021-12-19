@@ -7,6 +7,8 @@ import (
 )
 
 var (
+	ProfileConfig Config
+
 	profileFlag string
 
 	RootCmd = &cobra.Command{
@@ -22,16 +24,16 @@ func init() {
 }
 
 func loadConfigRun(_ *cobra.Command, _ []string) {
-	profile, err := LoadConfig()
+	config, err := LoadConfig()
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		os.Exit(1)
 	}
 
-	config, ok := profile[profileFlag]
+	profileConfig, ok := config[profileFlag]
 	if !ok {
 		fmt.Printf("profile %s does not exist in config file\n", profileFlag)
 		os.Exit(1)
 	}
-	UserConfig = config
+	ProfileConfig = profileConfig
 }

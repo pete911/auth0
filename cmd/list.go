@@ -13,4 +13,5 @@ var (
 
 func init() {
 	listCmd.AddCommand(listUserCmd)
+	listCmd.AddCommand(listLogCmd)
 }

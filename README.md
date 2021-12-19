@@ -16,7 +16,7 @@ Where `default` is a profile. This allows to store multiple clients. Profile can
 ## run
 
 ```
-auth0 list users
+auth0 list <user|log>
 Flags:
   -h, --help             help for auth0
   -p, --profile string   auth0 profile (default "default")

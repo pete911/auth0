@@ -27,12 +27,7 @@ func init() {
 }
 
 func listUserRun(_ *cobra.Command, _ []string) {
-	m, err := management.New(UserConfig.Domain, management.WithClientCredentials(UserConfig.ClientId, UserConfig.ClientSecret))
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-
+	m := NewManagement()
 	list, err := m.User.List(listUserFlags.GetRequestOptions()...)
 	if err != nil {
 		fmt.Println(err.Error())
